@@ -26,11 +26,11 @@ class HistoryService {
   }
   // TODO: Define a getCities method that reads the cities from the searchHistory.json file and returns them as an array of City objects
   async getCities() {
-    return await this.read().then((cities) => {
+    return await this.read().then((searchHistory) => {
       let parsedCities: City[];
 
       try {
-        parsedCities = [].concat(JSON.parse(cities));
+        parsedCities = [].concat(JSON.parse(searchHistory));
       } catch (err) {
         parsedCities = [];
       }
