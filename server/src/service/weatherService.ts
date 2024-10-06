@@ -41,7 +41,7 @@ class Weather {
 
 
 // TODO: Complete the WeatherService class
-class WeatherService implements Coordinates{
+class WeatherService implements Coordinates {
   // TODO: Define the baseURL, API key, and city name properties
   private baseUrl?: string;
 
@@ -68,7 +68,7 @@ class WeatherService implements Coordinates{
   }
   // TODO: Create destructureLocationData method
   private destructureLocationData(locationData: Coordinates): Coordinates {
-    const {name, country, state} = locationData;
+    const { name, country, state } = locationData;
     locationDataUrl = `${this.baseUrl}/data/2.5/weather?q=${name},${state},${country}&appid=${this.apikey}`;
     return locationData;
   }
@@ -84,21 +84,26 @@ class WeatherService implements Coordinates{
   }
   // TODO: Create fetchAndDestructureLocationData method
   private async fetchAndDestructureLocationData() {
-   try{
-    const response = await fetch(this.fetchAndDestructureLocationData(locationDataUrl));
-    const destructureLocationData = await this.fetchLocationData(response.json());
-    return destructureLocationData;
-   }catch(err){
-    console.log('Error:', err);
-   }
+    try {
+      const response = await fetch(this.fetchLocationData);
+      const { name, country, state } = (response.json());
+      const destructureLocationData = {
+        name: name,
+        country: country,
+        state: state,
+      }
+      return destructureLocationData;
+    } catch (err) {
+      console.log('Error:', err);
+    }
   }
   // TODO: Create fetchWeatherData method
   private async fetchWeatherData(coordinates: Coordinates) {
-    try{
+    try {
       const response = await fetch(coordinates);
       const weatherData = await response.json();
       return weatherData;
-    }catch(err){
+    } catch (err) {
       console.log('Error:', err);
     }
   }
