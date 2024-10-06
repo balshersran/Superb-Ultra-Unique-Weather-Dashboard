@@ -5,6 +5,9 @@ dotenv.config();
 interface Coordinates {
   lon: number;
   lat: number;
+  name: string;
+  country: string;
+  state: string;
 }
 
 // TODO: Define a class for the Weather object
@@ -38,13 +41,13 @@ class Weather {
 
 
 // TODO: Complete the WeatherService class
-class WeatherService {
+class WeatherService implements Coordinates{
   // TODO: Define the baseURL, API key, and city name properties
   private baseUrl?: string;
 
   private apikey?: string;
 
-  cityName: string;
+  cityName: string = '';
 
   constructor() {
     this.baseUrl = process.env.API_BASE_URL || '';
@@ -64,15 +67,28 @@ class WeatherService {
     }
   }
   // TODO: Create destructureLocationData method
-  // private destructureLocationData(locationData: Coordinates): Coordinates {}
+  private destructureLocationData(locationData: Coordinates): Coordinates {
+    const {lon, lat, name, country, state} = locationData;
+  }
   // TODO: Create buildGeocodeQuery method
-  // private buildGeocodeQuery(): string {}
+  private buildGeocodeQuery(): string {
+    const geocodeQuery = `${this.baseUrl}/geo/1.0/direct?q=${this.cityName}&appid=${this.apikey}`;
+    return geocodeQuery;
+  }
   // TODO: Create buildWeatherQuery method
   // private buildWeatherQuery(coordinates: Coordinates): string {}
   // TODO: Create fetchAndDestructureLocationData method
   // private async fetchAndDestructureLocationData() {}
   // TODO: Create fetchWeatherData method
-  // private async fetchWeatherData(coordinates: Coordinates) {}
+  private async fetchWeatherData(coordinates: Coordinates) {
+    try{
+      const response = await fetch(coordinates);
+      const weatherData = await response.json();
+      return weatherData;
+    }catch(err){
+      console.log('Error:', err);
+    }
+  }
   // TODO: Build parseCurrentWeather method
   // private parseCurrentWeather(response: any) {}
   // TODO: Complete buildForecastArray method
