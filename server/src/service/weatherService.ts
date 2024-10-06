@@ -68,7 +68,9 @@ class WeatherService implements Coordinates{
   }
   // TODO: Create destructureLocationData method
   private destructureLocationData(locationData: Coordinates): Coordinates {
-    const {lon, lat, name, country, state} = locationData;
+    const {name, country, state} = locationData;
+    locationDataUrl = `${this.baseUrl}/data/2.5/weather?q=${name},${state},${country}&appid=${this.apikey}`;
+    return locationData;
   }
   // TODO: Create buildGeocodeQuery method
   private buildGeocodeQuery(): string {
@@ -76,9 +78,20 @@ class WeatherService implements Coordinates{
     return geocodeQuery;
   }
   // TODO: Create buildWeatherQuery method
-  // private buildWeatherQuery(coordinates: Coordinates): string {}
+  private buildWeatherQuery(coordinates: Coordinates): string {
+    const weatherQuery = `${this.baseUrl}/data/2.5/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${this.apikey}`;
+    return weatherQuery;
+  }
   // TODO: Create fetchAndDestructureLocationData method
-  // private async fetchAndDestructureLocationData() {}
+  private async fetchAndDestructureLocationData() {
+   try{
+    const response = await fetch(this.fetchAndDestructureLocationData(locationDataUrl));
+    const destructureLocationData = await this.fetchLocationData(response.json());
+    return destructureLocationData;
+   }catch(err){
+    console.log('Error:', err);
+   }
+  }
   // TODO: Create fetchWeatherData method
   private async fetchWeatherData(coordinates: Coordinates) {
     try{
