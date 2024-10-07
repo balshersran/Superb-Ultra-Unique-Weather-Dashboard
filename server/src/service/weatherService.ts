@@ -69,8 +69,12 @@ class WeatherService implements Coordinates {
   // TODO: Create destructureLocationData method
   private destructureLocationData(locationData: Coordinates): Coordinates {
     const { name, country, state } = locationData;
-    locationDataUrl = `${this.baseUrl}/data/2.5/weather?q=${name},${state},${country}&appid=${this.apikey}`;
-    return locationData;
+    const destructureLocationData = {
+      name: name,
+      country: country,
+      state: state,
+    };
+    return destructureLocationData;
   }
   // TODO: Create buildGeocodeQuery method
   private buildGeocodeQuery(): string {
@@ -79,20 +83,17 @@ class WeatherService implements Coordinates {
   }
   // TODO: Create buildWeatherQuery method
   private buildWeatherQuery(coordinates: Coordinates): string {
-    const weatherQuery = `${this.baseUrl}/data/2.5/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${this.apikey}`;
-    return weatherQuery;
+    const weatherQueryUrl = `${this.baseUrl}/data/2.5/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${this.apikey}`;
+    return weatherQueryUrl;
   }
   // TODO: Create fetchAndDestructureLocationData method
   private async fetchAndDestructureLocationData() {
     try {
       const response = await fetch(this.fetchLocationData);
-      const { name, country, state } = (response.json());
-      const destructureLocationData = {
-        name: name,
-        country: country,
-        state: state,
-      }
-      return destructureLocationData;
+      const data = (response.json());
+      const { name, country, state } = data
+      const locationData = this.destructureLocationData({ name, country, state });
+      return locationData;
     } catch (err) {
       console.log('Error:', err);
     }
@@ -100,7 +101,7 @@ class WeatherService implements Coordinates {
   // TODO: Create fetchWeatherData method
   private async fetchWeatherData(coordinates: Coordinates) {
     try {
-      const response = await fetch(coordinates);
+      const response = await fetch(this.buildWeatherQuery(coordinates));
       const weatherData = await response.json();
       return weatherData;
     } catch (err) {
@@ -108,7 +109,18 @@ class WeatherService implements Coordinates {
     }
   }
   // TODO: Build parseCurrentWeather method
-  // private parseCurrentWeather(response: any) {}
+  private parseCurrentWeather(response: any) {
+    const parsedCurrentWeather = {
+      city: response.name,
+      icon: response.weather.icon,
+      iconDescription: response.weather[0].descripton,
+      date: response.dt,
+      tempF: response.main.tempF,
+      windSpeed: response.wind.speed,
+      humidity: response.main.humidity,
+    }
+    return parsedCurrentWeather;
+  }
   // TODO: Complete buildForecastArray method
   // private buildForecastArray(currentWeather: Weather, weatherData: any[]) {}
   // TODO: Complete getWeatherForCity method
