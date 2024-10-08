@@ -113,15 +113,15 @@ class WeatherService {
   }
   // TODO: Build parseCurrentWeather method
   private parseCurrentWeather(response: any) {
-    const currentWeather = {
-      city: response.name,
-      icon: response.weather.icon,
-      iconDescription: response.weather[0].descripton,
-      date: response.dt,
-      tempF: response.main.tempF,
-      windSpeed: response.wind.speed,
-      humidity: response.main.humidity,
-    }
+    const currentWeather = new Weather (
+      response.name,
+      response.weather.icon,
+      response.weather[0].descripton,
+      response.dt,
+      response.main.tempF,
+      response.wind.speed,
+      response.main.humidity,
+    )
     return currentWeather;
   }
   // TODO: Complete buildForecastArray method
@@ -144,11 +144,12 @@ class WeatherService {
   }
   // TODO: Complete getWeatherForCity method
   async getWeatherForCity(city: string) {
-    const cityWeather = this.buildGeocodeQuery(city);
-    const weatherData = this.buildWeatherQuery(cityWeather);
-    const currentWeather = this.buildForecastArray(cityWeather,weatherData);
+    const weather = this.fetchAndDestructureLocationData(city);
+    const weatherData = this.fetchWeatherData(weather);
+    const data = this.parseCurrentWeather(weatherData);
+    const currentWeather = this.buildForecastArray(data);
     return currentWeather;
 }
-
+}
 export default new WeatherService();
 
