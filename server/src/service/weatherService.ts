@@ -104,7 +104,8 @@ class WeatherService {
   private async fetchWeatherData(coordinates: Coordinates) {
     try {
       const response = await fetch(this.buildWeatherQuery(coordinates));
-      const weatherData = await response.json();
+      const data = await response.json();
+      const weatherData = data.parseCurrentWeather(data);
       return weatherData;
     } catch (err) {
       console.log('Error:', err);
