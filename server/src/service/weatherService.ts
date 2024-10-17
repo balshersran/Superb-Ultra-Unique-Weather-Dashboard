@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { query } from 'express';
+// import { query } from 'express';
 dotenv.config();
 
 // TODO: Define an interface for the Coordinates object
@@ -45,16 +45,12 @@ class Weather {
 class WeatherService {
   // TODO: Define the baseURL, API key, and city name properties
   private baseUrl?: string;
-
   private apikey?: string;
-
-  cityName: string = '';
+  private cityName: string = '';
 
   constructor() {
     this.baseUrl = process.env.API_BASE_URL || '';
-
     this.apikey = process.env.API_KEY || '';
-
     this.cityName;
   }
   // TODO: Create fetchLocationData method
@@ -86,19 +82,12 @@ class WeatherService {
   }
   // TODO: Create buildWeatherQuery method
   private buildWeatherQuery(coordinates: Coordinates): string {
-    const weatherQueryUrl = `${this.baseUrl}/data/2.5/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${this.apikey}`;
+    const weatherQueryUrl = `${this.baseUrl}/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${this.apikey}`;
     return weatherQueryUrl;
   }
-  // TODO: Create fetchAndDestructureLocationData method
-  private async fetchAndDestructureLocationData(): Coordinates {
-    try {
-      const response = await this.fetchLocationData(this.buildGeocodeQuery());
-      const data = (response.json());
-      const locationData: Coordinates = this.destructureLocationData(data);
-      return locationData;
-    } catch (err) {
-      console.log('Error:', err);
-    }
+
+  private async fetchAndDestructureLocationData() {
+    return await this.fetchLocationData(this.buildGeocodeQuery()).then(data => this.destructureLocationData(data))
   }
   // TODO: Create fetchWeatherData method
   private async fetchWeatherData(coordinates: Coordinates) {
@@ -113,7 +102,7 @@ class WeatherService {
   }
   // TODO: Build parseCurrentWeather method
   private parseCurrentWeather(response: any) {
-    const currentWeather = new Weather (
+    const currentWeather = new Weather(
       response.name,
       response.weather.icon,
       response.weather[0].descripton,
@@ -142,14 +131,17 @@ class WeatherService {
     });
     return forecastArr;
   }
+
   // TODO: Complete getWeatherForCity method
-  async getWeatherForCity(city: string) {
-    const weather = this.fetchAndDestructureLocationData(city);
-    const weatherData = this.fetchWeatherData(weather);
-    const data = this.parseCurrentWeather(weatherData);
-    const currentWeather = this.buildForecastArray(data);
-    return currentWeather;
-}
+  async getWeatherForCity() {
+    const weather = await this.fetchAndDestructureLocationData();
+    if (weather) {
+      const weatherData = await this.fetchWeatherData(weather);
+      const data = await this.parseCurrentWeather(weatherData);
+      const currentWeather = await this.buildForecastArray(data, []);
+      return currentWeather;
+    }
+  }
 }
 export default new WeatherService();
 

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 
 // TODO: Define a City class with name and id properties
@@ -22,7 +22,7 @@ class HistoryService {
   }
   // TODO: Define a write method that writes the updated cities array to the searchHistory.json file
   private async write(cities: City[]) {
-    return await fs.writeFile('db/db.json', JSON.stringify(cities, null, '\t'));
+    return await fs.writeFile('db/db.json', JSON.stringify(cities, null, '\t' ));
   }
   // TODO: Define a getCities method that reads the cities from the searchHistory.json file and returns them as an array of City objects
   async getCities() {
